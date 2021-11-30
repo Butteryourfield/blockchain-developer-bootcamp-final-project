@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/Butteryourfield/blockchain-developer-bootcamp-final-project#readme",
   "dependencies": {
+    "ethereumjs-tx": "^2.1.2",
     "ganache-cli": "^6.12.2",
-    "truffle": "^5.4.22"
+    "truffle": "^5.4.22",
+    "web3": "^1.6.1"
   }
 }
