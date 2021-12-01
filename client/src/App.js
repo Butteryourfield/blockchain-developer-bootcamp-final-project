@@ -1,13 +1,22 @@
 import React, { Component, useState } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+// import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import raffleLotteryContract from "./contracts/raffleLottery.json";
 import getWeb3 from "./getWeb3";
+// import { Web3ReactProvider } from '@web3-react/core'
+// import Web3 from 'web3'
+import { useWeb3React } from "@web3-react/core"
+import { injected } from "./Connector"
 
+// import Header from "./Header";
+// import { injected } from "./Connector";
+import { Button } from "@material-ui/core";
+// import { useWeb3React } from "@web3-react/core"
+// const { active, account, activate, deactivate } = useWeb3React()
 import "./App.css";
 
 class App extends Component {
   state = { 
-    storageValue: 0, 
+    // storageValue: 0, 
     lotteryStatus: '-', 
     runningJackpot: 0, 
     entryTotal: 0, 
@@ -15,19 +24,23 @@ class App extends Component {
     numEntries: 0,
     web3: null, 
     accounts: null, 
-    contract: null 
+    contract: null,
+    activate: null,
   };
 
   componentDidMount = async () => {
     try {
+      // const { active, account, library, connector, activate, deactivate } = useWeb3React.activate
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
 
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+      // // Use web3 to get the user's accounts.
+      // const accounts = await web3.eth.getAccounts();
       
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
+
+      
 
       // Default storage contract
       // const deployedNetwork = SimpleStorageContract.networks[networkId];
@@ -45,7 +58,7 @@ class App extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runInitialGetter);
+      this.setState({ web3, contract: instance }, this.runInitialGetter);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -70,7 +83,7 @@ class App extends Component {
 
   // Lottery Contract initial run
   runInitialGetter = async () => {
-    const { accounts, contract } = this.state;
+    const { contract } = this.state;
 
     // Stores a given value, 5 by default.
     // await contract.methods.set(5).send({ from: accounts[0] });
@@ -95,6 +108,40 @@ class App extends Component {
     this.setState({ ticketPrice: ticketPriceResponse });
     
   };
+ // TRYING TO GET THE METAMASK CONNECT BUTTON TO WORK!.....
+  connect = async (event) => {
+    const web3 = this.state.web3
+    try {
+    // Use web3 to get the user's accounts.
+      // const accounts = await web3.window;
+      // await window.ethereum.enable();
+      const accounts = await web3.eth.getAccounts();
+      const account = accounts[0];
+
+      this.setState({ acounts: account });
+      this.setState({ numEntries: this.state.numEntries += 1 })
+      
+    } catch (ex) {
+      console.log(ex)
+    }    
+  }
+  
+  // export const loadAccount = async (dispatch, web3) => {
+  //   const accounts = await web3.eth.getAccounts();
+  //   const account = accounts[0];
+  //   dispatch(accountLoaded(account));
+  //   return account;
+  // }
+
+  // connect = async () => {
+  //   try {
+  //     await useWeb3React().activate(injected)
+  //     this.setState({ numEntries: this.state.numEntries -= 1 })
+  //   } catch (ex) {
+  //     this.setState({ numEntries: this.state.numEntries += 1 })
+  //     console.log(ex)
+  //   }
+  // }
 
   handleIncrementEntryNumber(event){
     this.setState({ numEntries: this.state.numEntries += 1 })
@@ -129,9 +176,42 @@ class App extends Component {
           Try changing the value stored on <strong>line 42</strong> of App.js.
         </p>
         <div>The stored value is: {this.state.storageValue}</div> */}
+{/*         
+        <button>click me</button>
+        <button variant="primary" size="lg">
+        Large button
+        </button> */}
+        {/* <Button
+          // onClick={disconnect}
+          variant="contained"
+          color="primary"
+          style={{
+            marginRight: "150px",
+            width: "250px"
+          }}
+        >
+            Disconnect
+        </Button> */}
+        {/* <span
+          style={{
+            marginLeft: "auto",
+            padding: "15px"
+          }}>
+          Not connected
+        </span> */}
+        <Button
+          onClick={this.connect.bind(this)}
+          variant="contained"
+          color="primary"
+          style={{
+            marginRight: "-900px",
+            width: "250px"
+          }}>
+            Connect to Metamask
+          </Button>
         <div>
         <h1>Laugh Alottery</h1>
-        <h3><i>Laughter is the language of Joy</i></h3>
+        <h3><i>- because laughter is the language of joy -</i></h3>
         <p>__________________________________________________________________________________________________________________</p>
         <div><b>Status:</b> {this.state.lotteryStatus}</div>
         <div><b>Current Jackpot:</b> {this.state.runningJackpot}</div>

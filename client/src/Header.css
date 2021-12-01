@@ -1,0 +1,117 @@
+.gradpapa {
+    align-self: center;
+    margin-left: 150px;
+    
+    background: linear-gradient(to right, #FFF 20%, #FF0 40%, #FF0 60%, #FFF 80%);
+    background-size: 200% auto;
+    
+    color: #000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    animation: shine 2s linear infinite;
+    -webkit-animation: shine 2s linear infinite;
+    -moz-animation: shine 2s linear infinite;
+
+    }
+    
+    @-webkit-keyframes shine {
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    @-moz-keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+    
+    @keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+    }
+
+    .gradLoad {
+      align-self: center;
+      
+      background: linear-gradient(to left, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+      background-size: 200% auto;
+      
+      color: #000;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+      animation: shine 2s linear infinite;
+      -webkit-animation: shine 2s linear infinite;
+      -moz-animation: shine 2s linear infinite;
+  
+      }
+      
+      @-webkit-keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+  
+      @-moz-keyframes shine {
+          to {
+            background-position: 200% center;
+          }
+        }
+      
+      @keyframes shine {
+      to {
+          background-position: 200% center;
+      }
+      }
+ 
+
+  .backpapa {
+    color: #fff;
+    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    background-size: 400% 400%;
+    -webkit-animation: Gradient 120s ease infinite;
+    -moz-animation: Gradient 120s ease infinite;
+    animation: Gradient 120s ease infinite;
+    }
+  
+
+    @-webkit-keyframes Gradient {
+        0% {
+        background-position: 0% 50%
+        }
+        50% {
+        background-position: 100% 50%
+        }
+        100% {
+        background-position: 0% 50%
+        }
+        }
+    
+    @-moz-keyframes Gradient {
+        0% {
+        background-position: 0% 50%
+        }
+        50% {
+        background-position: 100% 50%
+        }
+        100% {
+        background-position: 0% 50%
+        }
+        }
+    
+    @keyframes Gradient {
+        0% {
+        background-position: 0% 50%
+        }
+        50% {
+        background-position: 100% 50%
+        }
+        100% {
+        background-position: 0% 50%
+        }
+        }
