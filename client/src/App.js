@@ -1,18 +1,6 @@
 import React, { Component, useState } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import {
-  Button,
-  Input,
-  Select,
-  MenuItem,
-  CircularProgress,
-  Snackbar,
-} from "@material-ui/core";
 
 import "./App.css";
 
@@ -61,7 +49,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     // Stores a given value, 5 by default.
-    await contract.methods.set(42).send({ from: accounts[0] });
+    await contract.methods.set(5).send({ from: accounts[0] });
 
     // Get the value from the contract to prove it worked.
     const response = await contract.methods.get().call();
