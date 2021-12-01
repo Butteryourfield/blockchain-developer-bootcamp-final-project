@@ -28,16 +28,31 @@ contract raffleLottery {
     bool public isLotteryLive;
 
     // Modifiers
+    // only owner can declare winner
     modifier isOwner() {
         require(msg.sender == owner);
         _;
     }
 
+    // owner not allowed to enter lottery (as when they choose the randNonce in declareWinner they could use it advantageously)
+    // ofc the owner could enter lottery from other accounts they have the private key too... this is a problem and requires trust
+    modifier isNotOwner() {
+        require(msg.sender != owner);
+        _;
+    }
+
     // Events
-    event winnerDeclared(uint entryNumber, address playerAddress, uint jackpotTotal);
+    event runningJackpotTotal(uint jackpotTotal);
+    event runningEntryCount(uint entryCount);
+    event lotteryActive(bool isLotteryLive);
+    // enterLottery event
     event playerEntered(address playerAddress, uint numEntries);
+    // declareWinner event
+    event winnerDeclared(uint entryNumber, address playerAddress, uint jackpotTotal);
     // testing if there will be a difference between running jackpot total and this.balance at the end
     event discrepencyTest(uint discrepency);
+    // event for testing num gen function
+    event randomNumGen(uint randomNum);
 
     // constructor
     constructor () public {
@@ -48,22 +63,26 @@ contract raffleLottery {
         // ticket price
         ticketPrice = 1 ether;
 
-        // Initialise at 1, first entry, so can be randomised between 1 and xxxx
-        entryCount = 1;
-
+        entryCount = 0;
         // Would default to 0 probs but good for clarity
-        jackpotTotal = 0;
+        jackpotTotal = address(this).balance * 99 / 100;
 
         // lottery is live when contract is created
         isLotteryLive = true;
+
+        // For front end updates
+        emit lotteryActive(isLotteryLive);
+        emit runningEntryCount(entryCount);
+        emit runningJackpotTotal(jackpotTotal);
     }
 
     // Fallback function reverting tx if invalid data/function called
+    // so eth is only sent to contract via enterLottery function
     fallback() external payable {
         revert();
     }
 
-    function enterLottery(uint numEntries) public payable {
+    function enterLottery(uint numEntries) public payable isNotOwner {
         // Make sure a valid entry number is stated
         require(numEntries > 0);
         // Make sure the value of tx equals num entried * the price 
@@ -73,39 +92,48 @@ contract raffleLottery {
         require(isLotteryLive);
 
         for (uint i = entryCount; i < entryCount+numEntries; i++) {
-          entries[i].playerAddress = payable(msg.sender);
+          entryCount += 1; // first entry has a number of 1
+          entries[entryCount].playerAddress = payable(msg.sender);
         }
+
+        jackpotTotal = address(this).balance * 99 / 100;
+        // 99% of total balance is the prize
+        // remaining balance goes to owner... mostly for testing, can be omitted..
+        // seems like its easy to create a lottery without commision so user
+        // may be less inclined to use a lottery with owner commision
+        // unless the commission goes to a good cause or something like a charitbale donation
+        // commission for owner if the owner is trusted by the people entering lottery...
     
-        entryCount += numEntries;
-        jackpotTotal += msg.value;
-    
-        // event
+        // events for user confirmation
         emit playerEntered(msg.sender, numEntries);
+
+        // For front end updates
+        emit runningEntryCount(entryCount);
+        emit runningJackpotTotal(jackpotTotal);
     }
 
-    function declareWinner() public isOwner {
-        // for testing
-        uint discrepency = jackpotTotal - address(this).balance;
-        emit discrepencyTest(discrepency);
+    function declareWinner(uint randNonce) public isOwner {
+        // Mark the lottery inactive so no more entries
+        isLotteryLive = false;
 
-        // % of jackpot to winner
-        // jackpotTotal = 0.999*address(this).balance;
-        jackpotTotal = address(this).balance;
+        // For final front end lottery variable display updates
+        emit lotteryActive(isLotteryLive); // to show on frontend lottery has finished
+        emit runningEntryCount(entryCount);
+        emit runningJackpotTotal(jackpotTotal);
 
-       
-        // generate random entry number between 1 -> entryCount
-        uint randomEntryNumber = generateRandomNumber();
+        // for personal testing see if any discrepency
+        // uint discrepency = jackpotTotal - address(this).balance;
+        // emit discrepencyTest(discrepency);
+
+        // between 1 and entryCount
+        uint randomEntryNumber = generateRandomNumber(randNonce);
     
         entries[randomEntryNumber].playerAddress.transfer(jackpotTotal);
-
-        // Mark the lottery inactive
-        isLotteryLive = false;
     
-        // event
+        // winner declartion for updating front end with winner details...
         emit winnerDeclared(randomEntryNumber, entries[randomEntryNumber].playerAddress, jackpotTotal);
         
-        // owner commision
-        // address payable _owner = owner;
+        // Self destruct contract after winner has been sent prize, and remaining balance goes to owner
         selfdestruct(payable(owner));
     }
 
@@ -116,11 +144,29 @@ contract raffleLottery {
     // and randomising using complex algorithms takes to much computational power so is not viable on the network
     // Unless a portion of the jackpot goes to gas fees to do just that!
     
-    function generateRandomNumber() private view returns(uint) {
+
+    // generate random entry number between 1 -> entryCount
+    // -1 so that the entry number 0 can win the prize if minimum random number is 1...
+    // owner Declares winner and can choose a random nonce for generator function so cannot be predicted by anyone
+    // although owner could be malicious... and buy tickets and specify a nonce for their own gain
+    // Owner priveledges could be set to multiple accounts aswell so that the 'msg.sender' input
+    // in the generator function cannot be predicted...
+    // since owner initiates the declareWinner function the block timestamp cannot be predicted i think?
+    // all of this relies on the owner being trustworthy and transparent...
+    function generateRandomNumber(uint randNonce) private view returns(uint) {
         // found this new looking method for generating a somewhat random numero
         // still uses block timestamp which could be a method of attack for a malicious miner
-        uint randNonce = 0;
         randNonce++; 
         return uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % entryCount;
+    }
+
+    // testing random number generator function 
+    function generateRandomNumberTest(uint randNonce, uint entryCountTest) public isOwner {
+        // found this new looking method for generating a somewhat random numero
+        // still uses block timestamp which could be a method of attack for a malicious miner
+        //EVENT EMIT FUNCTION TO SEE RETURN VALUE???
+        randNonce++; 
+        uint randomNum = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % entryCountTest;
+        emit randomNumGen(randomNum);
     }
 }
