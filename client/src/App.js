@@ -1,5 +1,6 @@
 import React, { Component, useState } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import raffleLotteryContract from "./contracts/raffleLottery.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
@@ -7,10 +8,10 @@ import "./App.css";
 class App extends Component {
   state = { 
     storageValue: 0, 
-    lotteryStatus: 'Active', 
+    lotteryStatus: '-', 
     runningJackpot: 0, 
     entryTotal: 0, 
-    ticketPrice: 0.5,
+    ticketPrice: 0,
     numEntries: 0,
     web3: null, 
     accounts: null, 
@@ -24,18 +25,27 @@ class App extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-
+      
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
+
+      // Default storage contract
+      // const deployedNetwork = SimpleStorageContract.networks[networkId];
+      // const instance = new web3.eth.Contract(
+      //   SimpleStorageContract.abi,
+      //   deployedNetwork && deployedNetwork.address,
+      // );
+
+      // Lotteru contract
+      const deployedNetwork = raffleLotteryContract.networks[networkId];
       const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
+        raffleLotteryContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ web3, accounts, contract: instance }, this.runInitialGetter);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -44,18 +54,46 @@ class App extends Component {
       console.error(error);
     }
   };
+  // example for storage contract
+  // runExample = async () => {
+  //   const { accounts, contract } = this.state;
 
-  runExample = async () => {
+  //   // Stores a given value, 5 by default.
+  //   await contract.methods.set(5).send({ from: accounts[0] });
+
+  //   // Get the value from the contract to prove it worked.
+  //   const response = await contract.methods.get().call();
+
+  //   // Update state with the result.
+  //   this.setState({ storageValue: response });
+  // };
+
+  // Lottery Contract initial run
+  runInitialGetter = async () => {
     const { accounts, contract } = this.state;
 
     // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
+    // await contract.methods.set(5).send({ from: accounts[0] });
+    
     // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
+    // const response = await contract.methods.get().call();
 
+    const responseLotteryStatus = await contract.methods.isLotteryLive().call();
+    
+    var lotteryStatusString = '';
+    var ticketPriceResponse = 0;
     // Update state with the result.
-    this.setState({ storageValue: response });
+    if (responseLotteryStatus) {
+      ticketPriceResponse = await contract.methods.ticketPrice().call();
+      // convert wei into eth
+      ticketPriceResponse = ticketPriceResponse/(Math.pow(10, 18))
+      lotteryStatusString = 'ACTIVE'
+    }
+    else lotteryStatusString = 'INACTIVE';
+
+    this.setState({ lotteryStatus: lotteryStatusString });
+    this.setState({ ticketPrice: ticketPriceResponse });
+    
   };
 
   handleIncrementEntryNumber(event){
@@ -80,7 +118,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
+        {/* <h1>Good to Go!</h1>
         <p>Your Truffle Box is installed and ready.</p>
         <h2>Smart Contract Example</h2>
         <p>
@@ -90,9 +128,10 @@ class App extends Component {
         <p>
           Try changing the value stored on <strong>line 42</strong> of App.js.
         </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <div>The stored value is: {this.state.storageValue}</div> */}
         <div>
         <h1>Laugh Alottery</h1>
+        <h3><i>Laughter is the language of Joy</i></h3>
         <p>__________________________________________________________________________________________________________________</p>
         <div><b>Status:</b> {this.state.lotteryStatus}</div>
         <div><b>Current Jackpot:</b> {this.state.runningJackpot}</div>
