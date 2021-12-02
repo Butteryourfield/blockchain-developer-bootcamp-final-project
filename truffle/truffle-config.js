@@ -5,11 +5,11 @@ module.exports = {
   // to customize your Truffle configuration!
   contracts_build_directory: path.join(__dirname, "../client/src/contracts"),
   networks: {
-    // develop: {
-    //   host: "127.0.0.1",
-    //   port: 8545,
-    //   network_id: "*",
-    // },
+    develop: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*",
+    },
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
