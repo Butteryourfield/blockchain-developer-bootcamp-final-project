@@ -1,26 +1,41 @@
-# blockchain-developer-bootcamp-final-project
+## blockchain-developer-bootcamp-final-project
 
-# UPDATE - THIS AINT AN EXCUSE... BUT.... I have the front end and back end finished... but ive run into a number of problems withe connecting the two... for some reason every transaction i try to do using a ganache local blockchain is failing because it wont automatically set the gas limit/price - When i set the gas limit/price myself the ganache blockchain runs out of memory and closes.. - (when i first tried sending tx this did work and i was able to send tx succesfully, but while playing around with these same txs that were succesful, something went wrong and my ganache visual client became rlly laggy, and it stopped being able to open, even when reinstalling it...)
-# i dont know whats happening, but i can only think that it may have something to do with my device (as the problem persists even after reinstalling ganache) or my package manager homebrew...
-# I have tried many things to get it working but all failing, so i am resorting to resetting my laptop to factory settings and installing node directly rather than through homebrew as this may be the problem...
+PS. I understand I am late in submitting the final project, and am at peace with whatever is decided by the marker! Thanks
 
-# Thus itll take longer for me to complete but still planning on completing it...
-# I hope to be back at full speed soon...
+# Laugh Alottery 
+### *because laughter is the language of joy *
 
+## Project Description
 
+For this project I decided to create a raffle based lottery where users could buy a number of tickets at a specified price. What they paid for the tickets would go into the Jackpot, and in return they would get a ticket number for each ticket purchased... After a certain period of time (up to the owner at the moment) the owner of the contract can decide to end the lottery, in so doing calling a function to randomise a number from the list of ticket numbers and whoever holds that ticket number (linked to the address they bought the tickets) would recieve the Jackpot prize in their account - with a 1% commision fee remaining in the contract to pay for the owners deployment gas and hard work...(Y)
+The user interface would remain with the winner decleration on for a period of time, again up to the owner, before the owner initiates a self destruct command, destroying the contract, and sending any remaining (1%) balance to the owners account
 
-HELLO, for anyone looking at this repo...
-Namely people marking it
+I realise this setup has a number of implications, some noteable ones being that for the users to be keen to participate, the owner needs to be a trustworthy party... or else all sorts of problems could arise, from the owner not issuing winner declaration commands to them buying tickets themselves and attempting to predict the randomised number (as the owner gets to pick a ideally spontaneous nonce to be used in the random num generator)
+The implementation of the code is rudimentary and could be a lot more organised and concise for sure, but it works and serves as a proof of concept, hopefully being an adequate project for this course aswell...
 
-I have not finish yet, and i know i am past the deadline...
-If you wanna come back to me ill have it done by tonight...
+## How to Install
 
-but if not, all g, i am at peace with whatever the outcome
+0. Requires Node/npm installed
+1. Clone the repository to your local device
+2. Install truffle and ganache globally (using npm install -g ganache-cli, npm install -g truffle)
+3. Navigate to and run npm install in both the folders 'client' (frontend) and 'truffle' (smart contracts)
 
-i will still finish it by the time i go to sleep...
+## How to Run
 
-THANKS!
+0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
+1. Start a local blockchain on the port 8545 by using the 'ganache-cli' command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
+2. In the truffle directory, run 'truffle migrate --network development' to compile and deploy the contracts to the running local blockchain.
+3. In the client directory enter command 'npm run start', and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
 
-UPDATE: SPENT YONKS trying to make the metamask connect button work but havent been able too...
+## How to Interact
 
-Now im absolutely spent and will finish the project in the morning....
+If no account is connected, clicking 'Connect MetaMask' will open up a metamask window where you can connect multiple accounts - note only the current account will be able to send transactions and if you want to switch accounts you must do so in the metamask extension and then press 'Connect MetaMask' again in order to selecet that account on the interface.
+Users can increase/decrease the amount of tickets they would like using the buttons, the price automatically calculated, and when they are happy with it, can click submit, opening metamask transaction confirmation window
+Once the transaction is sent the user should see there transaction processed succesfully and recieve a notification under the submit button with the details of their entry (including ticket numbers)
+
+To end the lottery and declare a winner, from the owner account selected a nonce value is randomly chosen by the owner to help generate stronger randomness, and then the button 'END LOTTERY ABD DECLARE WINNER' can be pressed
+The lottery will determine a winne, send 99% of the Jackpot to that address, display their public details on the interface, and wait for the next command
+
+To finish, after a period of time the owner can call the Self Destruct function by pressing the 'Self Destruct' Button... This destroys the contract, releases all the contracts data from the interface, and sends all remaming contract balance (1% jackpot) to the owners address
+
+Redeploy contract to start again! - Can also change the ticket price with the raffleLottery.sol contract constructor
