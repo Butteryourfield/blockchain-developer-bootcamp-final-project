@@ -27,7 +27,7 @@ The implementation of the code is rudimentary and could be a lot more organised 
 
 ## How to Run
 
-- Video Walkthrough - Coming very soon... Uploading
+- Video Walkthrough - https://youtu.be/Yrpn48V6LXA 
 End of video -> Oh and you can redeploy the contract again using `truffle migrate --network development -r` to do it all again...
 
 0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
