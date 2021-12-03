@@ -24,8 +24,12 @@ contract raffleLottery {
     mapping(uint => Player) entries;
 
     // Variables for lottery information
-    Player public winner;
-    bool public isLotteryLive;
+    bool public isLotteryLive; // inactive/active undeployed/deployed
+    bool public hasLotteryEnded; // used for when a winner is declared on the deployed contract
+
+    address public winnerAddress;
+    uint public winnerEntryNumber;
+    uint public winnerPrize;
 
     // Modifiers
     // only owner can declare winner
@@ -46,7 +50,7 @@ contract raffleLottery {
     event runningEntryCount(uint entryCount);
     event lotteryActive(bool isLotteryLive);
     // enterLottery event
-    event playerEntered(address playerAddress, uint numEntries);
+    event playerEntered(address playerAddress, uint numEntries, uint[] raffleNumbers);
     // declareWinner event
     event winnerDeclared(uint entryNumber, address playerAddress, uint jackpotTotal);
     // testing if there will be a difference between running jackpot total and this.balance at the end
@@ -63,12 +67,16 @@ contract raffleLottery {
         // ticket price
         ticketPrice = 1 ether;
 
-        entryCount = 0;
+        entryCount = 1; // initialise at 1, because we dont want a raffle ticket number of 0
         // Would default to 0 probs but good for clarity
         jackpotTotal = address(this).balance * 99 / 100;
+        // 1% of jackpot goes to owner for delpoyment gas fees
+        // Could build a contract that doesnt need to be redeployed from scratch
+        // one that can initiate the lottery from the existing deployed contract
 
         // lottery is live when contract is created
         isLotteryLive = true;
+        hasLotteryEnded = false;
 
         // For front end updates
         emit lotteryActive(isLotteryLive);
@@ -85,16 +93,38 @@ contract raffleLottery {
     function enterLottery(uint numEntries) public payable isNotOwner {
         // Make sure a valid entry number is stated
         require(numEntries > 0);
+        // require(numEntries < 30);
         // Make sure the value of tx equals num entried * the price 
         // if not then something gone wrong... revert... maybe someone hacked the frontend??
         require(msg.value == numEntries*ticketPrice);
         // Make sure lottery is live before tx processed
         require(isLotteryLive);
 
+        // Temporay array to gather and emit the raffle ticket numbers of the player
+        uint[] memory raffleNumbers = new uint[](numEntries);
+        uint raffleNumberIndex = 0;
+
         for (uint i = entryCount; i < entryCount+numEntries; i++) {
-          entryCount += 1; // first entry has a number of 1
-          entries[entryCount].playerAddress = payable(msg.sender);
+          // ____________________________
+          // entryCount += 1;
+          // ^^^^^^^^^^^^^^^^^^^^^ this line
+          // FOR ANYONE LOOKING AT MY CODE, i feel like you should know that i spent 
+          // the better part of 2 days glued to my screen looking for a bug that i could not find
+          // I resorted to resetting my computer to factory settings and reinstalling everything again
+          // Little did i know the problem lay in this one little line of code
+          // effectively transforming this for loop into an infinite one...
+          // NO WONDER... well i guess i have now without a doubt learnt the hard way
+          // I ALSO MUST THANK REMIX BECAUSE THAT IS HOW I REALISED!
+
+          raffleNumbers[raffleNumberIndex] = i;
+          raffleNumberIndex += 1;
+
+          entries[i].playerAddress = payable(msg.sender);
         }
+
+        entryCount += numEntries; // quick fix...
+        // and whats even funnier, is that this was the inital method
+        // and for some odd reason i implemented it in the for loop afterward
 
         jackpotTotal = address(this).balance * 99 / 100;
         // 99% of total balance is the prize
@@ -105,7 +135,7 @@ contract raffleLottery {
         // commission for owner if the owner is trusted by the people entering lottery...
     
         // events for user confirmation
-        emit playerEntered(msg.sender, numEntries);
+        emit playerEntered(msg.sender, numEntries, raffleNumbers);
 
         // For front end updates
         emit runningEntryCount(entryCount);
@@ -115,6 +145,7 @@ contract raffleLottery {
     function declareWinner(uint randNonce) public isOwner {
         // Mark the lottery inactive so no more entries
         isLotteryLive = false;
+        hasLotteryEnded = true;
 
         // For final front end lottery variable display updates
         emit lotteryActive(isLotteryLive); // to show on frontend lottery has finished
@@ -128,12 +159,21 @@ contract raffleLottery {
         // between 1 and entryCount
         uint randomEntryNumber = generateRandomNumber(randNonce);
     
-        entries[randomEntryNumber].playerAddress.transfer(jackpotTotal);
+        entries[randomEntryNumber].playerAddress.call{value: jackpotTotal}("");
+        
+        winnerAddress = entries[randomEntryNumber].playerAddress;
+        winnerEntryNumber = randomEntryNumber;
+        winnerPrize = jackpotTotal;
     
         // winner declartion for updating front end with winner details...
         emit winnerDeclared(randomEntryNumber, entries[randomEntryNumber].playerAddress, jackpotTotal);
-        
+    }
+
+    function selfDestruct() public isOwner {
+        require(!isLotteryLive);
+
         // Self destruct contract after winner has been sent prize, and remaining balance goes to owner
+        // TIMER TO DESCRUCT??
         selfdestruct(payable(owner));
     }
 
