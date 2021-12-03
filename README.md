@@ -48,5 +48,11 @@ Redeploy contract to start again! - Can also change the ticket price with the ra
 - `/src/contracts/` stores the ABI formats of the contracts
 
 *`/truffle/` - All the smart contract/solidity stuff
-- One contract in raffleLottery.sol
+- One contract `/contracts/' in raffleLottery.sol apart from migration.sol
 - `/test/` tests folder... with nothing in it atm...
+
+## I know I have no tests atm.. maybe they will get implemented by the time the marker arrives, but ok if not, still planning on adding some soon!
+
+
+## PUBLIC ETHEREUM ADDRESS - (for NFT certificate if i wasnt too late...)
+0xd29f8C6f5cc11BE966e70505300fc84Bbd075CEf
