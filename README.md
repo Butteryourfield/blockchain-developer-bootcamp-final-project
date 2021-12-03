@@ -15,17 +15,17 @@ The implementation of the code is rudimentary and could be a lot more organised 
 
 ## How to Install
 
-0. Requires Node/npm installed
-1. Clone the repository to your local device
-2. Install truffle and ganache globally (using npm install -g ganache-cli, npm install -g truffle)
+0. Requires Node/npm installed (my version is `v16.13.1`)
+1. Clone this repository to your local device
+2. Install truffle and ganache globally (using `npm install -g ganache-cli`, `npm install -g truffle`)
 3. Navigate to and run npm install in both the folders 'client' (frontend) and 'truffle' (smart contracts)
 
 ## How to Run
 
 0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
-1. Start a local blockchain on the port 8545 by using the 'ganache-cli' command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
-2. In the truffle directory, run 'truffle migrate --network development' to compile and deploy the contracts to the running local blockchain.
-3. In the client directory enter command 'npm run start', and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
+1. Start a local blockchain on the port 8545 by using the `ganache-cli` command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
+2. In the truffle directory, run `truffle migrate --network development` (use tag `--reset` if redeploying) to compile and deploy the contracts to the running local blockchain.
+3. In the client directory enter command `npm run start`, and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
 4. Also make sure that metamask is running on the localhost:8545 network - use the ganache-cli memnomic to import test account into metamask (be aware account 1 will likely be the owner account)
 
 ## How to Interact
@@ -40,3 +40,12 @@ The lottery will determine a winne, send 99% of the Jackpot to that address, dis
 To finish, after a period of time the owner can call the Self Destruct function by pressing the 'Self Destruct' Button... This destroys the contract, releases all the contracts data from the interface, and sends all remaming contract balance (1% jackpot) to the owners address
 
 Redeploy contract to start again! - Can also change the ticket price with the raffleLottery.sol contract constructor
+
+## Directory Structure
+
+`/client/` - Frontend stuff
+        - App.js one page interface that is updated depending on 3 main lottery states
+        - `/src/contracts/` stores the ABI formats of the contracts
+`/truffle/` - All the smart contract/solidity stuff
+        - One contract in raffleLottery.sol
+        - `/test/` tests folder... with nothing in it atm...

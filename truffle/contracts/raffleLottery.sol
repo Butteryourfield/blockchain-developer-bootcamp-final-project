@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
+// use single pragma version for security
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
