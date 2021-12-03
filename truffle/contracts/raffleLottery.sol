@@ -1,8 +1,11 @@
-pragma solidity ^0.8.10;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.10;
 
-contract raffleLottery {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract raffleLottery is Ownable {
     // Owner address of the lottery contract
-    address public owner;
+    // address public owner;
 
     // name of the lottery
     string public lotteryName;
@@ -33,15 +36,16 @@ contract raffleLottery {
 
     // Modifiers
     // only owner can declare winner
-    modifier isOwner() {
-        require(msg.sender == owner);
-        _;
-    }
+    // modifier isOwner() {
+    //     require(msg.sender == owner);
+    //     _;
+    // }
+    // Open Zepp ownable used
 
     // owner not allowed to enter lottery (as when they choose the randNonce in declareWinner they could use it advantageously)
     // ofc the owner could enter lottery from other accounts they have the private key too... this is a problem and requires trust
     modifier isNotOwner() {
-        require(msg.sender != owner);
+        require(msg.sender != owner());
         _;
     }
 
@@ -61,7 +65,7 @@ contract raffleLottery {
     // constructor
     constructor () public {
         // Set the owner of contract to the transaction sender/deployer
-        owner = msg.sender;
+        // owner = msg.sender;
         // name of lottery
         lotteryName = "Laugh Alottery";
         // ticket price
@@ -142,7 +146,7 @@ contract raffleLottery {
         emit runningJackpotTotal(jackpotTotal);
     }
 
-    function declareWinner(uint randNonce) public isOwner {
+    function declareWinner(uint randNonce) public onlyOwner {
         // Mark the lottery inactive so no more entries
         isLotteryLive = false;
         hasLotteryEnded = true;
@@ -169,12 +173,12 @@ contract raffleLottery {
         emit winnerDeclared(randomEntryNumber, entries[randomEntryNumber].playerAddress, jackpotTotal);
     }
 
-    function selfDestruct() public isOwner {
+    function selfDestruct() public onlyOwner {
         require(!isLotteryLive);
 
         // Self destruct contract after winner has been sent prize, and remaining balance goes to owner
         // TIMER TO DESCRUCT??
-        selfdestruct(payable(owner));
+        selfdestruct(payable(owner()));
     }
 
     // when starting this project i didnt think about the nature of randomising numbers on the blockchain
@@ -201,7 +205,7 @@ contract raffleLottery {
     }
 
     // testing random number generator function 
-    function generateRandomNumberTest(uint randNonce, uint entryCountTest) public isOwner {
+    function generateRandomNumberTest(uint randNonce, uint entryCountTest) public onlyOwner {
         // found this new looking method for generating a somewhat random numero
         // still uses block timestamp which could be a method of attack for a malicious miner
         //EVENT EMIT FUNCTION TO SEE RETURN VALUE???

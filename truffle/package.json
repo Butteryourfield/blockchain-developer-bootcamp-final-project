@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Butteryourfield/blockchain-developer-bootcamp-final-project#readme",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.4.0",
     "ethereumjs-tx": "^2.1.2",
     "ganache-cli": "^6.12.2",
     "truffle": "^5.4.22",

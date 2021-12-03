@@ -26,6 +26,7 @@ The implementation of the code is rudimentary and could be a lot more organised 
 1. Start a local blockchain on the port 8545 by using the 'ganache-cli' command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
 2. In the truffle directory, run 'truffle migrate --network development' to compile and deploy the contracts to the running local blockchain.
 3. In the client directory enter command 'npm run start', and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
+4. Also make sure that metamask is running on the localhost:8545 network - use the ganache-cli memnomic to import test account into metamask (be aware account 1 will likely be the owner account)
 
 ## How to Interact
 
