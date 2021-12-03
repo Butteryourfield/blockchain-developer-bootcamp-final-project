@@ -5,8 +5,7 @@ pragma solidity 0.8.10;
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 contract raffleLottery is Ownable {
-    // Owner address of the lottery contract
-    // address public owner;
+    // Owner address of the lottery contract through OpenZepplin
 
     // name of the lottery
     string public lotteryName;
@@ -65,8 +64,6 @@ contract raffleLottery is Ownable {
 
     // constructor
     constructor () public {
-        // Set the owner of contract to the transaction sender/deployer
-        // owner = msg.sender;
         // name of lottery
         lotteryName = "Laugh Alottery";
         // ticket price
@@ -133,16 +130,15 @@ contract raffleLottery is Ownable {
 
         jackpotTotal = address(this).balance * 99 / 100;
         // 99% of total balance is the prize
-        // remaining balance goes to owner... mostly for testing, can be omitted..
+        // remaining balance goes to owner...
         // seems like its easy to create a lottery without commision so user
         // may be less inclined to use a lottery with owner commision
         // unless the commission goes to a good cause or something like a charitbale donation
         // commission for owner if the owner is trusted by the people entering lottery...
     
+        // For front end updates
         // events for user confirmation
         emit playerEntered(msg.sender, numEntries, raffleNumbers);
-
-        // For front end updates
         emit runningEntryCount(entryCount);
         emit runningJackpotTotal(jackpotTotal);
     }
@@ -189,7 +185,6 @@ contract raffleLottery is Ownable {
     // and randomising using complex algorithms takes to much computational power so is not viable on the network
     // Unless a portion of the jackpot goes to gas fees to do just that!
     
-
     // generate random entry number between 1 -> entryCount
     // -1 so that the entry number 0 can win the prize if minimum random number is 1...
     // owner Declares winner and can choose a random nonce for generator function so cannot be predicted by anyone
@@ -198,6 +193,7 @@ contract raffleLottery is Ownable {
     // in the generator function cannot be predicted...
     // since owner initiates the declareWinner function the block timestamp cannot be predicted i think?
     // all of this relies on the owner being trustworthy and transparent...
+
     function generateRandomNumber(uint randNonce) private view returns(uint) {
         // found this new looking method for generating a somewhat random numero
         // still uses block timestamp which could be a method of attack for a malicious miner
@@ -207,9 +203,6 @@ contract raffleLottery is Ownable {
 
     // testing random number generator function 
     function generateRandomNumberTest(uint randNonce, uint entryCountTest) public onlyOwner {
-        // found this new looking method for generating a somewhat random numero
-        // still uses block timestamp which could be a method of attack for a malicious miner
-        //EVENT EMIT FUNCTION TO SEE RETURN VALUE???
         randNonce++; 
         uint randomNum = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % entryCountTest;
         emit randomNumGen(randomNum);
