@@ -43,9 +43,10 @@ Redeploy contract to start again! - Can also change the ticket price with the ra
 
 ## Directory Structure
 
-`/client/` - Frontend stuff
+*`/client/` - Frontend stuff
 - App.js one page interface that is updated depending on 3 main lottery states
 - `/src/contracts/` stores the ABI formats of the contracts
-`/truffle/` - All the smart contract/solidity stuff
+
+*`/truffle/` - All the smart contract/solidity stuff
 - One contract in raffleLottery.sol
 - `/test/` tests folder... with nothing in it atm...
