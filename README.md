@@ -2,8 +2,13 @@
 
 PS. I understand I am late in submitting the final project, and am at peace with whatever is decided by the marker! Thanks
 
+Not yet done
+- I have yet to deploy to a free frontend service or testnet -> if you know a good resource for seting it up i would be grateful to be directed
+- No test scripts implemented yet
+- Still planning on it but pressed for time
+
 # Laugh Alottery 
-### *because laughter is the language of joy *
+### * because laughter is the language of joy *
 
 ## Project Description
 
@@ -21,6 +26,9 @@ The implementation of the code is rudimentary and could be a lot more organised 
 3. Navigate to and run npm install in both the folders 'client' (frontend) and 'truffle' (smart contracts)
 
 ## How to Run
+
+- Video Walkthrough - Coming very soon... Uploading
+End of video -> Oh and you can redeploy the contract again using `truffle migrate --network development -r` to do it all again...
 
 0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
 1. Start a local blockchain on the port 8545 by using the `ganache-cli` command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
