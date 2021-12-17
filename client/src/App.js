@@ -64,60 +64,65 @@ class App extends Component {
   // Lottery Contract initial run
   runGetter = async () => {
       const { contract } = this.state;
+ 
+      try {
+        const responseLotteryStatus = await contract.methods.isLotteryLive().call();
+        const hasLotteryEnded = await contract.methods.hasLotteryEnded().call();
 
-      const responseLotteryStatus = await contract.methods.isLotteryLive().call();
-      const hasLotteryEnded = await contract.methods.hasLotteryEnded().call();
+        var lotteryStatusString = ''
+      
+        // Update state with the result.
+        // Three different general states of the interface
+        // 1. Interface loaded but contract not connected yet - status: Inactive
+        // 2. Contract connected and lottery is in process of gathering user entries - status - Active
+        // 3. Owner has declared a winner and lottery is finished - awaiting destruction
 
-      var lotteryStatusString = ''
-     
-      // Update state with the result.
-      // Three different general states of the interface
-      // 1. Interface loaded but contract not connected yet - status: Inactive
-      // 2. Contract connected and lottery is in process of gathering user entries - status - Active
-      // 3. Owner has declared a winner and lottery is finished - awaiting destruction
+        if (!hasLotteryEnded) {
+          if (responseLotteryStatus) {
+            var ticketPriceResponse = await contract.methods.ticketPrice().call();
+            var jackpotTotal = await contract.methods.jackpotTotal().call();
+            var entryTotal = await contract.methods.entryCount().call();
+            lotteryStatusString = 'ACTIVE'
+            var ownerOfLottery = await contract.methods.owner().call();
 
-      if (!hasLotteryEnded) {
-        if (responseLotteryStatus) {
+            this.setState({ runningJackpot: jackpotTotal})
+            this.setState({ entryTotal: entryTotal})
+            this.setState({ ticketPrice: ticketPriceResponse });
+            this.setState({ owner: ownerOfLottery });
+          } else lotteryStatusString = 'INACTIVE';
+        } else {
+          lotteryStatusString = 'FINISHED - Self Destruct Imminent'
           var ticketPriceResponse = await contract.methods.ticketPrice().call();
           var jackpotTotal = await contract.methods.jackpotTotal().call();
           var entryTotal = await contract.methods.entryCount().call();
-          lotteryStatusString = 'ACTIVE'
           var ownerOfLottery = await contract.methods.owner().call();
 
+          var winnerAddress = await contract.methods.winnerAddress().call();
+          var winnerEntryNumber = await contract.methods.winnerEntryNumber().call();
+          var winnerPrize = await contract.methods.winnerPrize().call();
+
+          this.setState({ 
+            winner: 
+              { returnValues: 
+                {
+                  entryNumber: winnerEntryNumber, 
+                  playerAddress: winnerAddress, 
+                  jackpotTotal: winnerPrize
+                }
+              }
+          })
           this.setState({ runningJackpot: jackpotTotal})
           this.setState({ entryTotal: entryTotal})
           this.setState({ ticketPrice: ticketPriceResponse });
           this.setState({ owner: ownerOfLottery });
-        } else lotteryStatusString = 'INACTIVE';
-      } else {
-        lotteryStatusString = 'FINISHED - Self Destruct Imminent'
-        var ticketPriceResponse = await contract.methods.ticketPrice().call();
-        var jackpotTotal = await contract.methods.jackpotTotal().call();
-        var entryTotal = await contract.methods.entryCount().call();
-        var ownerOfLottery = await contract.methods.owner().call();
+        }
+        
 
-        var winnerAddress = await contract.methods.winnerAddress().call();
-        var winnerEntryNumber = await contract.methods.winnerEntryNumber().call();
-        var winnerPrize = await contract.methods.winnerPrize().call();
-
-        this.setState({ 
-          winner: 
-            { returnValues: 
-              {
-                entryNumber: winnerEntryNumber, 
-                playerAddress: winnerAddress, 
-                jackpotTotal: winnerPrize
-              }
-            }
-        })
-        this.setState({ runningJackpot: jackpotTotal})
-        this.setState({ entryTotal: entryTotal})
-        this.setState({ ticketPrice: ticketPriceResponse });
-        this.setState({ owner: ownerOfLottery });
+        this.setState({ lotteryStatus: lotteryStatusString });
       }
-      
-
-      this.setState({ lotteryStatus: lotteryStatusString });
+      catch (error) {
+        this.setState({ lotteryStatus: 'Contract not deployed' });
+      }
     
   };
 
