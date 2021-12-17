@@ -28,7 +28,7 @@ End of video -> Oh and you can redeploy the contract again using `truffle migrat
 
 0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
 1. Start a local blockchain on the port 8545 by using the `ganache-cli` command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
-2. In the truffle directory, first run the testing script by entering the command `truffle test`, hopefully that checks out then you can run `truffle migrate --network development` (use tag `--reset` if redeploying) to compile and deploy the contracts to the running local blockchain.
+2. In the truffle directory, first run the testing script by entering the command `truffle test`, hopefully that checks out then you can run `truffle migrate --network development` (use tag `--reset` if redeploying) to compile and deploy the contracts to the running local blockchain. (restart blockchain if you want the accounts to reset as the balances will have changed due to tests)
 3. In the client directory enter command `npm run start`, and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
 4. Also make sure that metamask is running on the localhost:8545 network (refresh the localhost network on metamask by readding it again if lottery status is 'INACTIVE' after deploying contract) - use the ganache-cli memnomic to import test account into metamask (be aware account 1 will likely be the owner account)
 
