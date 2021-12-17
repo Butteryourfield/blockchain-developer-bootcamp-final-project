@@ -1,11 +1,6 @@
 const raffleLottery = artifacts.require("raffleLottery");
 const { expectRevert } = require('../node_modules/@openzeppelin/test-helpers');
 
-/*
- * uncomment accounts to access the test accounts made available by the
- * Ethereum client
- * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
- */
 contract("raffleLottery", function (accounts) {
 
   const [contractOwner, participant1, participant2, participant3] = accounts;
@@ -20,15 +15,15 @@ contract("raffleLottery", function (accounts) {
     return assert.isTrue(true);
   });
 
-  // it("!", async function () {
-  //   ticketPrice = Number(await instance.ticketPrice())
+  it("!", async function () {
+    ticketPrice = Number(await instance.ticketPrice())
 
-  //   await expectRevert.assertion(
+    await expectRevert(
       
-  //     instance.enterLottery(10, { from: participant3, value: 10}),
-  //     'participant ended lottery...'
-  //   );
-  // });
+      instance.enterLottery(10, { from: participant3, value: 10}),
+      'TX value must equal ticketprice * NumEntries',
+    );
+  });
 
   it("is the Lottery Live", async function () {
     await instance.isLotteryLive();

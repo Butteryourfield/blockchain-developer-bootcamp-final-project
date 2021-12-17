@@ -98,7 +98,7 @@ contract raffleLottery is Ownable {
         // require(numEntries < 30);
         // Make sure the value of tx equals num entried * the price 
         // if not then something gone wrong... revert... maybe someone hacked the frontend??
-        require(msg.value == numEntries*ticketPrice);
+        require(msg.value == numEntries*ticketPrice, 'TX value must equal ticketprice * NumEntries');
         // Make sure lottery is live before tx processed
         require(isLotteryLive);
 
