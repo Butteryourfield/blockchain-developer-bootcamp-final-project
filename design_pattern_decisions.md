@@ -2,6 +2,7 @@
 
 * Inheritance and interfaces: 
 - The project contract imports `Ownable.sol` from OpenZeppelin library.
+- The testing scripts using the test tools from OpenZepplin library, namely the expectRevert function
 
 # Access Control Pattern
 - Adds restrictions to calling function 'declareWinner' by using modifiers (`onlyOwner`) from the imported `Ownable` contract
