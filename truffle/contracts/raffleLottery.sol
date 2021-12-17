@@ -171,7 +171,7 @@ contract raffleLottery is Ownable {
     }
 
     function selfDestruct() public onlyOwner {
-        require(!isLotteryLive);
+        require(!isLotteryLive, 'lottery still active');
 
         // Self destruct contract after winner has been sent prize, and remaining balance goes to owner
         // TIMER TO DESCRUCT??
