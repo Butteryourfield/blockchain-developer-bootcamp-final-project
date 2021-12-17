@@ -1,11 +1,7 @@
 ## blockchain-developer-bootcamp-final-project
 
-PS. I understand I am late in submitting the final project, and am at peace with whatever is decided by the marker! Thanks
-
 Not yet done
-- I have yet to deploy to a free frontend service or testnet -> if you know a good resource for seting it up i would be grateful to be directed
-- No test scripts implemented yet
-- Still planning on it but pressed for time
+- I have yet to deploy to a free frontend service or testnet
 
 # Laugh Alottery 
 ### * because laughter is the language of joy *
@@ -32,7 +28,7 @@ End of video -> Oh and you can redeploy the contract again using `truffle migrat
 
 0. Open 3 terminal windows (1. 'any global' directory 2. 'truffle' directory, 3. 'client' directory)
 1. Start a local blockchain on the port 8545 by using the `ganache-cli` command in terminal (this should automatically start a localhost:8545 blockchain from the truffle-config.js).
-2. In the truffle directory, run `truffle migrate --network development` (use tag `--reset` if redeploying) to compile and deploy the contracts to the running local blockchain.
+2. In the truffle directory, first run the testing script by entering the command `truffle test`, hopefully that checks out then you can run `truffle migrate --network development` (use tag `--reset` if redeploying) to compile and deploy the contracts to the running local blockchain.
 3. In the client directory enter command `npm run start`, and you browser (gchrome for me) should automatically open up the user interface (it may take a little bit of time and a few refreshes before it grabs data from the contract)
 4. Also make sure that metamask is running on the localhost:8545 network - use the ganache-cli memnomic to import test account into metamask (be aware account 1 will likely be the owner account)
 
@@ -57,10 +53,8 @@ Redeploy contract to start again! - Can also change the ticket price with the ra
 
 *`/truffle/` - All the smart contract/solidity stuff
 - One contract `/contracts/' in raffleLottery.sol apart from migration.sol
-- `/test/` tests folder... with nothing in it atm...
-
-## I know I have no tests atm.. maybe they will get implemented by the time the marker arrives, but ok if not, still planning on adding some soon!
+- `/test/` tests folder
 
 
-## PUBLIC ETHEREUM ADDRESS - (for NFT certificate if i wasnt too late...)
+## PUBLIC ETHEREUM ADDRESS - (for NFT certificate)
 0xd29f8C6f5cc11BE966e70505300fc84Bbd075CEf
